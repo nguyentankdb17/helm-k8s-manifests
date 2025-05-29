@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.appName }}
+          image: "{{ .Values.containerImage }}:{{ .Values.imageVersion }}"
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          env:
+            {{- range .Values.containerEnvVars }}
+            - name: "{{ .name }}"
+              value: "{{ .value }}"
+            {{- end }}
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: {{ .Values.containerPort }}
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: {{ .Values.containerPort }}
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-liveness-probe"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.appName}}
+spec:
+  selector:
+    app:  {{ .Values.appName}}
+  type:  {{ .Values.serviceType}}
+  ports:
+  - protocol: TCP
+    port:  {{ .Values.servicePort}}
+    targetPort:  {{ .Values.containerPort}}

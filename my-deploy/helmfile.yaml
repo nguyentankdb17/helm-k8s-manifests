@@ -1,0 +1,53 @@
+releases:
+  - name: rediscart
+    chart: charts/redis
+  
+  - name: frontend
+    chart: charts/frontend
+
+  - name: emailservice
+    chart: charts/microservice
+    values:
+      - service_values/emailservice-values.yaml
+
+  - name: cartservice
+    chart: charts/microservice
+    values:
+      - service_values/cartservice-values.yaml
+
+  - name: currencyservice
+    chart: charts/microservice
+    values:
+      - service_values/currencyservice-values.yaml   
+
+  - name: paymentservice
+    chart: charts/microservice
+    values:
+      - service_values/paymentservice-values.yaml
+
+  - name: recommendationservice
+    chart: charts/microservice
+    values:
+      - service_values/recommendationservice-values.yaml
+
+  - name: productcatalogservice
+    chart: charts/microservice
+    values:
+      - service_values/productcatalogservice-values.yaml
+
+  - name: shippingservice
+    chart: charts/microservice
+    values:
+      - service_values/shippingservice-values.yaml
+
+  - name: adservice
+    chart: charts/microservice
+    values:
+      - service_values/adservice-values.yaml
+
+  - name: checkoutservice
+    chart: charts/microservice
+    values:
+      - service_values/checkoutservice-values.yaml
+
+    
