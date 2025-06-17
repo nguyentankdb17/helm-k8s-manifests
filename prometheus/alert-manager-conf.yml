@@ -1,5 +1,5 @@
-apiVersion: monitoring.coreos.com/v1
-kind: monitoring.coreos.com/v1beta1
+apiVersion: monitoring.coreos.com/v1beta1
+kind: AlertManagerConfig
 metadata:
   name: main-rules-alerts-conf
   namespace: monitoring
