@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: monitoring.coreos.com/v1beta1
+metadata:
+  name: main-rules-alerts-conf
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    release: my-prometheus
+spec:
+  route:
+    receiver: 'email-receiver'
+    repeatInterval: 1h
+    routes:
+    - matchers:
+      - name: alertname
+        value: 'HostHighMemoryUsage'
+    - matchers:
+      - name: alertname
+        value: 'KubernetesPodCrashLooping'
+      repeatInterval: 10m
+    - matchers:
+      - name: severity
+        value: 'critical'
+    
+  receivers:
+  - name: 'email-receiver'
+    emailConfigs:
+    - to: 'receiver@gmail.com'
+      from: 'sender@gmail.com'
+      smarthost: 'smtp.gmail.com:587'
+      authUsername: 'sender@gmail.com'
+      authIdentity: 'sender@gmail.com'
+      authPassword:
+        name: email-secret
+        key: password

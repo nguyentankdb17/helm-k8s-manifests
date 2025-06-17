@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: main-rules
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    release: my-prometheus
+spec:
+  groups:
+  - name: main.rules
+    rules:
+    - alert: HostHighMemoryUsage
+      expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 80
+      for: 2m
+      labels:
+        severity: warning
+        namespace: monitoring
+      annotations:
+        summary: "High memory usage detected on {{ $labels.instance }}"
+        description: "Memory usage is above 80% for the last 5 minutes on instance {{ $labels.instance }}.\n\nCurrent memory usage: {{ $value }}%\n\nPlease investigate the cause of high memory usage and take necessary actions to optimize performance."
+    - alert: KubernetesPodCrashLooping
+      expr: kube_pod_container_status_restarts_total > 5
+      for: 0m
+      labels:
+        severity: critical
+        namespace: monitoring
+      annotations:
+        summary: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is crashing"
+        description: "The pod has restarted more than 5 times in the last 5 minutes. Please check the logs for more details."
